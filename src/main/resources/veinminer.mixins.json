@@ -1,14 +1,17 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "net.glasslauncher.example.mixin",
+  "package": "pl.lijek.veinminer.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ExampleMixin"
+    "BlockBaseInvoker"
   ],
   "server": [
   ],
   "client": [
+    "BaseClientInteractionManagerMixin",
+    "MinecraftMixin",
+    "InGameMixin"
   ],
   "injectors": {
     "defaultRequire": 1

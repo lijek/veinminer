@@ -1,13 +1,13 @@
-# Fabric Example Mod with StationAPI and BIN Mappings for beta 1.7.3 server + client
+# Veinminer
+Mod that allows to mine multiple blocks that are connected together.
+For now it has basic functionality and some mining mods.
+Default vein mining key is `~`. Mine a block with `~` to vein mine.
+You can see a list of modes in left top corner if you hold the key.
+To change mode you press shift & the `~` and scroll with your mouse wheel.
 
-## Setup
+I hope this mod is fun and useful for you!
 
-[See the StationAPI wiki.](https://github.com/ModificationStation/StationAPI)
-
-## Common Issues
-
-[Here.](https://github.com/calmilamsy/BIN-fabric-example-mod#common-issues)
-
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+## Requirements
+- Minecraft Beta 1.7.3
+- Cursed fabric loader
+- StationAPI 2.0-PRE2

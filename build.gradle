@@ -89,6 +89,8 @@ dependencies {
 	modImplementation "com.github.minecraft-cursed-legacy:cursed-fabric-loader:${project.loader_version}"
 
 	modImplementation "com.github.ModificationStation:StationAPI:${project.stapi_version}"
+
+	modImplementation "com.github.calmilamsy:HowManyItems-Fabric-Unofficial:6af40ed"
 }
 
 processResources {
