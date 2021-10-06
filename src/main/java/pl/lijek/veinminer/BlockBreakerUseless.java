@@ -6,62 +6,63 @@ import net.minecraft.entity.Item;
 import net.minecraft.entity.player.PlayerBase;
 import net.minecraft.item.ItemBase;
 import net.minecraft.item.ItemInstance;
-import net.minecraft.item.tool.Pickaxe;
-import net.minecraft.item.tool.Shears;
-import net.minecraft.item.tool.Shovel;
-import net.minecraft.item.tool.Sword;
 import net.minecraft.level.Level;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.maths.Vec3i;
 import pl.lijek.veinminer.mixin.BlockBaseInvoker;
-import pl.lijek.veinminer.util.BlockData;
+import pl.lijek.veinminer.util.BlockAddAction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import static net.minecraft.block.BlockBase.LEAVES;
 import static net.minecraft.block.BlockBase.SNOW;
+import static pl.lijek.veinminer.util.BlockAddAction.*;
 import static pl.lijek.veinminer.VeinMiner.damageTool;
+import static pl.lijek.veinminer.VeinMiner.maxDistanceNORMAL;
 
 @RequiredArgsConstructor
-public class BlockBreaker {
-    private final PlayerBase player;
-    private final Level level;
-    private final List<BlockData> blocksToBreak;
+public class BlockBreakerUseless {
     private final List<ItemInstance> drops = new ArrayList<>();
+    public final Vec3i origin;
+    public final Level level;
+    public final PlayerBase player;
+    public final int side;
+    public final int targetID;
+    public final int targetMeta;
 
-    public void breakBlocks(){
-        for(Vec3i block : blocksToBreak){
+    public int maxDistance = maxDistanceNORMAL;
 
-            int id = level.getTileId(block.x, block.y, block.z);
-            int meta = level.getTileMeta(block.x, block.y, block.z);
+    public BlockAddAction breakBlock(Vec3i target, BiFunction<Vec3i, Vec3i, Integer> measureDistance){
 
-            BlockBase minedBlock = BlockBase.BY_ID[id];
-            if(minedBlock == null)
-                continue;
+        int id = level.getTileId(target.x, target.y, target.z);
+        int meta = level.getTileMeta(target.x, target.y, target.z);
 
-            if(isHoldingTool(player) && !player.canRemoveBlock(minedBlock))
-                continue;
-            if(useHeldItem(player, block.x, block.y, block.z, id))
-                break;
+        BlockBase targetBlock = BlockBase.BY_ID[targetID];
+        BlockBase minedBlock = BlockBase.BY_ID[id];
 
+        if ((id == 73 || id == 74) && (targetID == 73 || targetID == 74))
+            id = targetID;
 
-            minedBlock.activate(level, block.x, block.y, block.z, meta);
-            level.setTile(block.x, block.y, block.z, 0);
-            player.increaseStat(Stats.mineBlock[id], 1);
-            addDrop(minedBlock, meta);
-        }
-    }
+        if(!(id == targetID && (meta == 0 || meta == targetMeta)))
+            return SKIP;
 
-    private boolean isHoldingTool(PlayerBase player){
-        ItemInstance itemInstance = player.getHeldItem();
-        if (itemInstance == null) return false;
-        ItemBase item = itemInstance.getType();
-        if(item == null) return false;
-        return item instanceof Pickaxe ||
-                item instanceof Shears ||
-                item instanceof Shovel ||
-                item instanceof Sword;
+        int distance = measureDistance.apply(origin, target);
+        if(!(maxDistanceNORMAL == -1 || distance <= maxDistance))
+            return SKIP;
+
+        if(!player.canRemoveBlock(minedBlock))
+            return SKIP;
+        if(useHeldItem(player, target.x, target.y, target.z, id))
+            return CANCEL;
+
+        minedBlock.activate(level, target.x, target.y, target.z, meta);
+        level.setTile(target.x, target.y, target.z, 0);
+        player.increaseStat(Stats.mineBlock[id], 1);
+        addDrop(minedBlock, meta);
+
+        return PASS;
     }
 
     private void addDrop(ItemInstance drop){
@@ -116,7 +117,7 @@ public class BlockBreaker {
         return false;
     }
 
-    public void spawnDrops(){
+    public void spawnDrop(){
         for (ItemInstance drop : drops) {
             if(drop.count > drop.getMaxStackSize()){
                 for (int i = 0; i < drop.count / drop.getMaxStackSize(); i++) {
@@ -134,7 +135,7 @@ public class BlockBreaker {
         double offsetX = (double)(level.rand.nextFloat() * randomMultiplier) + (double)(1.0F - randomMultiplier) * 0.5D;
         double offsetY = (double)(level.rand.nextFloat() * randomMultiplier) + (double)(1.0F - randomMultiplier) * 0.5D;
         double offsetZ = (double)(level.rand.nextFloat() * randomMultiplier) + (double)(1.0F - randomMultiplier) * 0.5D;
-        Item item = new Item(level, player.x + offsetX, player.y + offsetY, player.z + offsetZ, itemInstance);
+        Item item = new Item(level, (double)origin.x + offsetX, (double)origin.y + offsetY, (double)origin.z + offsetZ, itemInstance);
         item.pickupDelay = 10;
         level.spawnEntity(item);
     }

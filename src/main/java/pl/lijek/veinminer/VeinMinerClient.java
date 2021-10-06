@@ -5,10 +5,15 @@ import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.render.TextRenderer;
+import net.minecraft.entity.player.PlayerBase;
+import net.minecraft.level.Level;
+import net.minecraft.util.maths.Vec3i;
 import net.modificationstation.stationapi.api.client.event.keyboard.KeyStateChangedEvent;
 import net.modificationstation.stationapi.api.client.event.option.KeyBindingRegisterEvent;
 import net.modificationstation.stationapi.api.registry.Identifier;
 import org.lwjgl.input.Keyboard;
+import pl.lijek.veinminer.shapes.Shape;
+import pl.lijek.veinminer.util.Util;
 
 import java.util.List;
 
@@ -17,13 +22,17 @@ public class VeinMinerClient {
     public static KeyBinding veinMineKey;
     public static KeyBinding sneakKey;
     public static VeinMinerMode veinMinerMode = VeinMinerMode.NORMAL;
+    public static Level level;
+    public static PlayerBase localPlayer;
+    public static Shape shape;
     public static boolean veinMiningKeyPressed = false;
     public static boolean sneakKeyPressed = false;
     public static int timer;
     public static final int fadeTime = 150;
 
     public static void postMcInit() {
-        sneakKey = ((Minecraft) FabricLoader.getInstance().getGameInstance()).options.sneakKey;
+        Minecraft mc = ((Minecraft) FabricLoader.getInstance().getGameInstance());
+        sneakKey = mc.options.sneakKey;
     }
 
     @EventListener
@@ -60,7 +69,7 @@ public class VeinMinerClient {
         }
 
         int alpha = 255;
-        if(timer <= fadeTime && timer > 0){
+        if(timer <= fadeTime && timer > 0 && !veinMiningKeyPressed){
             double alphaMultiplier = timer / (fadeTime * 1.0D);
             alphaMultiplier = Math.abs(alphaMultiplier);
             alpha = (int) (255.0D * alphaMultiplier);
@@ -70,6 +79,31 @@ public class VeinMinerClient {
         textRenderer.drawTextWithShadow(Util.translate(veinMinerMode.getPrevious().getTranslationKey()), 2, 2, 0xdddddd + (alpha << 24));
         textRenderer.drawTextWithShadow(Util.translate(veinMinerMode.getTranslationKey()), 2, 11, 0xffffff + (alpha << 24));
         textRenderer.drawTextWithShadow(Util.translate(veinMinerMode.getNext().getTranslationKey()), 2, 20, 0xdddddd + (alpha << 24));
+    }
+
+    public static void switchLevel(Minecraft mc){
+        VeinMinerClient.level = mc.level;
+        localPlayer = mc.player;
+    }
+
+    public static void changeShape(int x, int y, int z){
+        if(shape == null)
+            shape = veinMinerMode.getShape(level, new Vec3i(x, y, z));
+        if(!shape.origin.equals(new Vec3i(x, y, z)))
+            shape.reset(x, y, z);
+    }
+
+    public static void setAndRender(int x, int y, int z, float delta){
+        if(!veinMiningKeyPressed)
+            return;
+
+        changeShape(x, y, z);
+
+        double fixX = localPlayer.prevRenderX + (localPlayer.x - localPlayer.prevRenderX) * (double)delta;
+        double fixY = localPlayer.prevRenderY + (localPlayer.y - localPlayer.prevRenderY) * (double)delta;
+        double fixZ = localPlayer.prevRenderZ + (localPlayer.z - localPlayer.prevRenderZ) * (double)delta;
+
+        shape.render(fixX, fixY, fixZ);
     }
 
 }

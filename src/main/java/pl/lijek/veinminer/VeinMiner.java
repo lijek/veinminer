@@ -9,6 +9,8 @@ import net.modificationstation.stationapi.api.packet.Message;
 import net.modificationstation.stationapi.api.registry.Identifier;
 import net.modificationstation.stationapi.api.registry.ModID;
 import net.modificationstation.stationapi.api.util.Null;
+import pl.lijek.veinminer.shapes.Shape;
+import pl.lijek.veinminer.util.BlockData;
 
 public class VeinMiner {
     @Entrypoint.ModID
@@ -17,25 +19,24 @@ public class VeinMiner {
     public static Identifier breakWithVeinMinePacket = Identifier.of(MODID, "breakWithVeinMiner");
     public static boolean damageTool = true;
     public static int maxDistanceNORMAL = 5;
+    public static int maxBlocksToMine = 525;
 
     @EventListener
     public void listenToMessages(MessageListenerRegistryEvent event){
         event.registry.register(breakWithVeinMinePacket, (PlayerBase playerBase, Message msg) -> {
-            //x, y, z, i1, blockID, blockMeta, mode.toInt(), matcherMode.toInt()
-            if(playerBase == null) {
-                System.out.println("PLAYER IS NULL!!!!");
-                return;
-            }
             int x = msg.ints[0];
             int y = msg.ints[1];
             int z = msg.ints[2];
             int side = msg.ints[3];
-            int blockID = msg.ints[4];
-            int blockMeta = msg.ints[5];
-            BlockBreaker breaker = new BlockBreaker(new Vec3i(x, y, z), playerBase.level, playerBase, side, blockID, blockMeta);
+            int id = msg.ints[4];
+            int meta = msg.ints[5];
+            playerBase.level.playLevelEvent(2001, x, y, z, id + meta * 256);
             VeinMinerMode mode = VeinMinerMode.values()[msg.ints[6]];
-            mode.mine(x, y, z, breaker);
-            breaker.spawnDrop();
+            Shape shape = mode.getShape(playerBase.level, new Vec3i(x, y, z));
+            shape.changeOrigin(new BlockData(x, y, z, id, meta));
+            BlockBreaker blockBreaker = new BlockBreaker(playerBase, playerBase.level, shape.blocks);
+            blockBreaker.breakBlocks();
+            blockBreaker.spawnDrops();
         });
     }
 }

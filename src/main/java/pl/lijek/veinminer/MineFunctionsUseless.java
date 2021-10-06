@@ -1,10 +1,8 @@
 package pl.lijek.veinminer;
 
-import net.minecraft.util.maths.Vec3i;
+public class MineFunctionsUseless {
 
-public class MineFunctions {
-
-    public static void mineNormal(int x, int y, int z, BlockBreaker breaker){
+    /*public static void mineNormal(int x, int y, int z, BlockBreaker breaker){
         int d = 1;
         for (int dx = -d; dx <= d; dx++) {
             for (int dy = -d; dy <= d; dy++) {
@@ -13,7 +11,7 @@ public class MineFunctions {
                         continue;
 
                     Vec3i target = new Vec3i(x + dx, y + dy, z + dz);
-                    BlockBreakAction action = breaker.breakBlock(target, Util::getSphericalDistance);
+                    BlockAddAction action = breaker.breakBlock(target, Util::getSphericalDistance);
                     if(action.skipPass)
                         continue;
                     else if(action.cancel)
@@ -33,7 +31,7 @@ public class MineFunctions {
                         continue;
 
                     Vec3i target = new Vec3i(x + dx, y + dy, z + dz);
-                    BlockBreakAction action = breaker.breakBlock(target, Util::getDistance);
+                    BlockAddAction action = breaker.breakBlock(target, Util::getDistance);
                     if(action.skipPass)
                         continue;
                     else if(action.cancel)
@@ -52,7 +50,7 @@ public class MineFunctions {
 
         for (int i = 0; i < breaker.maxDistance; i++) {
             Vec3i target = new Vec3i(x + (dx * i), y + (dy * i), z + (dz * i));
-            BlockBreakAction action = breaker.breakBlock(target, Util::getDistance);
+            BlockAddAction action = breaker.breakBlock(target, Util::getDistance);
             if(action.cancel)
                 return;
         }
@@ -65,7 +63,7 @@ public class MineFunctions {
 
         for (int i = 0; i < breaker.maxDistance; i++) {
             Vec3i target = new Vec3i(x + (dx * i), y + (dy * i), z + (dz * i));
-            BlockBreakAction action = breaker.breakBlock(target, Util::getDistance);
+            BlockAddAction action = breaker.breakBlock(target, Util::getDistance);
             if(action.cancel)
                 return;
 
@@ -74,5 +72,5 @@ public class MineFunctions {
             if(action.cancel)
                 return;
         }
-    }
+    }*/
 }

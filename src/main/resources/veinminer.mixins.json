@@ -11,7 +11,8 @@
   "client": [
     "BaseClientInteractionManagerMixin",
     "MinecraftMixin",
-    "InGameMixin"
+    "InGameMixin",
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
