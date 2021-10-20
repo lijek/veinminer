@@ -10,12 +10,16 @@ import net.minecraft.level.Level;
 import net.minecraft.util.maths.Vec3i;
 import net.modificationstation.stationapi.api.client.event.keyboard.KeyStateChangedEvent;
 import net.modificationstation.stationapi.api.client.event.option.KeyBindingRegisterEvent;
+import net.modificationstation.stationapi.api.packet.Message;
+import net.modificationstation.stationapi.api.packet.PacketHelper;
 import net.modificationstation.stationapi.api.registry.Identifier;
 import org.lwjgl.input.Keyboard;
 import pl.lijek.veinminer.shapes.Shape;
 import pl.lijek.veinminer.util.Util;
 
 import java.util.List;
+
+import static pl.lijek.veinminer.VeinMiner.breakWithVeinMinePacket;
 
 public class VeinMinerClient {
 
@@ -82,14 +86,15 @@ public class VeinMinerClient {
     }
 
     public static void switchLevel(Minecraft mc){
-        VeinMinerClient.level = mc.level;
+        level = mc.level;
         localPlayer = mc.player;
+        if(shape != null)
+            shape.level = level;
     }
 
     public static void changeShape(int x, int y, int z){
         if(shape == null)
             shape = veinMinerMode.getShape(level, new Vec3i(x, y, z));
-        if(!shape.origin.equals(new Vec3i(x, y, z)))
             shape.reset(x, y, z);
     }
 
@@ -104,6 +109,12 @@ public class VeinMinerClient {
         double fixZ = localPlayer.prevRenderZ + (localPlayer.z - localPlayer.prevRenderZ) * (double)delta;
 
         shape.render(fixX, fixY, fixZ);
+    }
+
+    public static void sendVeinMinePacket(int x, int y, int z, int side){
+        Message message = new Message(breakWithVeinMinePacket);
+        message.ints = new int[]{x, y, z, side, veinMinerMode.toInt()};
+        PacketHelper.send(message);
     }
 
 }

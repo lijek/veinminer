@@ -48,6 +48,7 @@ public class BlockBreaker {
 
             minedBlock.activate(level, block.x, block.y, block.z, meta);
             level.setTile(block.x, block.y, block.z, 0);
+            level.playLevelEvent(2001, block.x, block.y, block.z, id + meta * 256);
             player.increaseStat(Stats.mineBlock[id], 1);
             addDrop(minedBlock, meta);
         }
@@ -131,9 +132,9 @@ public class BlockBreaker {
 
     private void spawnItemEntity(ItemInstance itemInstance){
         float randomMultiplier = 0.7F;
-        double offsetX = (double)(level.rand.nextFloat() * randomMultiplier) + (double)(1.0F - randomMultiplier) * 0.5D;
-        double offsetY = (double)(level.rand.nextFloat() * randomMultiplier) + (double)(1.0F - randomMultiplier) * 0.5D;
-        double offsetZ = (double)(level.rand.nextFloat() * randomMultiplier) + (double)(1.0F - randomMultiplier) * 0.5D;
+        double offsetX = 0.0d;//(double)(level.rand.nextFloat() * randomMultiplier) + (double)(1.0F - randomMultiplier) * 0.5D;
+        double offsetY = 1.0d;//(double)(level.rand.nextFloat() * randomMultiplier) + (double)(1.0F - randomMultiplier) * 0.5D;
+        double offsetZ = 0.0d;//(double)(level.rand.nextFloat() * randomMultiplier) + (double)(1.0F - randomMultiplier) * 0.5D;
         Item item = new Item(level, player.x + offsetX, player.y + offsetY, player.z + offsetZ, itemInstance);
         item.pickupDelay = 10;
         level.spawnEntity(item);

@@ -9,7 +9,8 @@
   "server": [
   ],
   "client": [
-    "BaseClientInteractionManagerMixin",
+    "SinglePlayerInteractionManagerMixin",
+    "MultiPlayerInteractionManagerMixin",
     "MinecraftMixin",
     "InGameMixin",
     "WorldRendererMixin"

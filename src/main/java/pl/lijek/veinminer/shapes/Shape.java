@@ -20,7 +20,7 @@ import static pl.lijek.veinminer.VeinMiner.maxBlocksToMine;
 import static pl.lijek.veinminer.VeinMiner.maxDistanceNORMAL;
 
 public abstract class Shape {
-    public final Level level;
+    public Level level;
     public BlockData origin;
     public BlockBase originBlock;
     public List<BlockData> blocks = new ArrayList<>();

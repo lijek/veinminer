@@ -11,8 +11,6 @@ public abstract class BlockMatcher {
 
     public boolean matchBlocks(Shape shape, Vec3i target){
         int targetID = shape.level.getTileId(target.x, target.y, target.z);
-        if(targetID == 0)
-            return false;
         int targetMeta = shape.level.getTileMeta(target.x, target.y, target.z);
         BlockBase targetBlock = BlockBase.BY_ID[targetID];
         return matchBlocks(shape.origin.id, shape.origin.meta, shape.originBlock, targetID, targetMeta, targetBlock);
@@ -24,7 +22,7 @@ public abstract class BlockMatcher {
             if ((originalID == 73 || originalID == 74) && (targetID == 73 || targetID == 74))
                 originalID = targetID;
 
-            return originalID == targetID && (originalMeta == 0 || originalMeta == targetMeta);
+            return originalID == targetID && originalMeta == targetMeta;
         }
     };
 }
