@@ -30,7 +30,6 @@ public class VeinMiner {
         int y = msg.ints[1];
         int z = msg.ints[2];
         int side = msg.ints[3];
-        System.out.println(playerBase.level.getTileId(x, y, z));
         VeinMinerMode mode = VeinMinerMode.values()[msg.ints[4]];
         Shape shape = mode.getShape(playerBase.level, new Vec3i(x, y, z));
         BlockBreaker blockBreaker = new BlockBreaker(playerBase, shape.level, shape.blocks);

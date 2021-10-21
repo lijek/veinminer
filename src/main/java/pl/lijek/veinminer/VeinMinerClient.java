@@ -95,7 +95,7 @@ public class VeinMinerClient {
     public static void changeShape(int x, int y, int z){
         if(shape == null)
             shape = veinMinerMode.getShape(level, new Vec3i(x, y, z));
-            shape.reset(x, y, z);
+        shape.reset(x, y, z);
     }
 
     public static void setAndRender(int x, int y, int z, float delta){

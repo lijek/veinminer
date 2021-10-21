@@ -1,5 +1,6 @@
 package pl.lijek.veinminer.mixin;
 
+import net.minecraft.block.BlockBase;
 import net.minecraft.client.MultiPlayerClientInteractionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,12 +21,14 @@ public class MultiPlayerInteractionManagerMixin {
 
     @Shadow private int field_2614;
 
-    @Inject(method = "method_1707", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MultiPlayerClientInteractionManager;method_1716(IIII)Z", shift = At.Shift.BEFORE), cancellable = true)
+    @Inject(method = "method_1707", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/packet/AbstractPacket;)V", shift = At.Shift.BEFORE), cancellable = true)
     private void beforeSendBlockRemoved1(int x, int y, int z, int side, CallbackInfo ci){
-        if(veinMiningKeyPressed){
-            sendVeinMinePacket(x, y, z, side);
-            ci.cancel();
-        }
+        int blockID = level.getTileId(x, y, z);
+        if(blockID > 0 && BlockBase.BY_ID[blockID].getHardness(localPlayer) >= 1.0F)
+            if(veinMiningKeyPressed){
+                sendVeinMinePacket(x, y, z, side);
+                ci.cancel();
+            }
     }
 
     @Inject(method = "method_1721", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/packet/AbstractPacket;)V", shift = At.Shift.BEFORE), cancellable = true)
