@@ -1,9 +1,9 @@
-key.veinMine=Vein mine
+key.veinmine=Vein mine
 
 mode.normal=Normal mode
-mode.tunnel1x1=Small tunnel 1x1 WIP
-mode.tunnel1x2=1x2 tunnel WIP
-mode.tunnel2x2=Square 2x2 tunnel WIP
-mode.tunnel3x3=Square 3x3 tunnel WIP
-mode.stairs_down=Stairs down WIP
-mode.stairs_up=Stairs up WIP
+mode.tunnel1x1=Small tunnel 1x1
+mode.tunnel1x2=1x2 tunnel
+mode.tunnel2x2=Square 2x2 tunnel
+mode.tunnel3x3=Square 3x3 tunnel
+mode.stairs_down=Stairs down
+mode.stairs_up=Stairs up

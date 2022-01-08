@@ -3,28 +3,40 @@ package pl.lijek.veinminer;
 import net.minecraft.level.Level;
 import net.minecraft.util.maths.Vec3i;
 import net.modificationstation.stationapi.api.registry.Identifier;
-import pl.lijek.veinminer.shapes.NormalShape;
-import pl.lijek.veinminer.shapes.Shape;
+import pl.lijek.veinminer.shapes.*;
+import uk.co.benjiweber.expressions.function.QuadFunction;
 
 import java.util.Locale;
-import java.util.function.BiFunction;
 
 public enum VeinMinerMode {
-    NORMAL(NormalShape::new), TUNNEL1X1, TUNNEL1X2,
-    TUNNEL2X2, TUNNEL3X3, STAIRS_DOWN, STAIRS_UP;
+    NORMAL(NormalShape::new, NormalShape.class),
+    TUNNEL1X1(Tunnel1x1::new, Tunnel1x1.class),
+    TUNNEL1X2(Tunnel1x2::new, Tunnel1x2.class),
+    TUNNEL2X2(Tunnel2x2::new, Tunnel2x2.class),
+    TUNNEL3X3(Tunnel3x3::new, Tunnel3x3.class),
+    STAIRS_DOWN(StairsDown::new, StairsDown.class),
+    STAIRS_UP(StairsUp::new, StairsUp.class);
 
-    private final BiFunction<Level, Vec3i, Shape> shapeCreator;
+    private final QuadFunction<Level, Vec3i, Integer, Integer, Shape> shapeCreator;
+    public final Class<? extends Shape> shapeClass;
 
     VeinMinerMode(){
         shapeCreator = NormalShape::new;
+        this.shapeClass = Shape.class;
     }
 
-    VeinMinerMode(BiFunction<Level, Vec3i, Shape> shapeCreator){
+    VeinMinerMode(QuadFunction<Level, Vec3i, Integer, Integer, Shape> shapeCreator){
         this.shapeCreator = shapeCreator;
+        this.shapeClass = Shape.class;
     }
 
-    public Shape getShape(Level level, Vec3i origin){
-        return shapeCreator.apply(level, origin);
+    VeinMinerMode(QuadFunction<Level, Vec3i, Integer, Integer, Shape> shapeCreator, Class<? extends Shape> shapeClass){
+        this.shapeCreator = shapeCreator;
+        this.shapeClass = shapeClass;
+    }
+
+    public Shape getShape(Level level, Vec3i origin, int hitSide, int playerFacing){
+        return shapeCreator.apply(level, origin, hitSide, playerFacing);
     }
 
     public int toInt(){

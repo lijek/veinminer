@@ -7,6 +7,8 @@ import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.render.TextRenderer;
 import net.minecraft.entity.player.PlayerBase;
 import net.minecraft.level.Level;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.maths.MathHelper;
 import net.minecraft.util.maths.Vec3i;
 import net.modificationstation.stationapi.api.client.event.keyboard.KeyStateChangedEvent;
 import net.modificationstation.stationapi.api.client.event.option.KeyBindingRegisterEvent;
@@ -32,6 +34,7 @@ public class VeinMinerClient {
     public static boolean veinMiningKeyPressed = false;
     public static boolean sneakKeyPressed = false;
     public static int timer;
+    public static int hitSide = 0;
     public static final int fadeTime = 150;
 
     public static void postMcInit() {
@@ -42,7 +45,7 @@ public class VeinMinerClient {
     @EventListener
     public void registerKeyBindings(KeyBindingRegisterEvent event) {
         List<KeyBinding> list = event.keyBindings;
-        list.add(veinMineKey = new KeyBinding(Identifier.of(VeinMiner.MODID, "veinMine").toString(), Keyboard.KEY_GRAVE));
+        list.add(veinMineKey = new KeyBinding("key." + Identifier.of(VeinMiner.MODID, "veinmine"), Keyboard.KEY_GRAVE));
     }
 
     @EventListener
@@ -51,7 +54,7 @@ public class VeinMinerClient {
         sneakKeyPressed = Keyboard.isKeyDown(sneakKey.key);
     }
 
-    public static void changeMode(int i){
+    public static boolean changeMode(int i){
         if(veinMiningKeyPressed && sneakKeyPressed) {
             if (i > 0) {
                 veinMinerMode = veinMinerMode.getPrevious();
@@ -60,7 +63,9 @@ public class VeinMinerClient {
             }
 
             timer = 200;
+            return true;
         }
+        return false;
     }
 
     public static void renderModeChange(Minecraft mc){
@@ -93,16 +98,17 @@ public class VeinMinerClient {
     }
 
     public static void changeShape(int x, int y, int z){
-        if(shape == null)
-            shape = veinMinerMode.getShape(level, new Vec3i(x, y, z));
-        shape.reset(x, y, z);
+        //if(shape == null || shape.getClass().isInstance(veinMinerMode.shapeClass))
+        shape = veinMinerMode.getShape(level, new Vec3i(x, y, z), hitSide, getPlayerFacing());
+        //shape.reset(x, y, z, hitSide);
     }
 
-    public static void setAndRender(int x, int y, int z, float delta){
+    public static void setAndRender(HitResult hit, float delta){
         if(!veinMiningKeyPressed)
             return;
 
-        changeShape(x, y, z);
+        hitSide = hit.field_1987;
+        changeShape(hit.x, hit.y, hit.z);
 
         double fixX = localPlayer.prevRenderX + (localPlayer.x - localPlayer.prevRenderX) * (double)delta;
         double fixY = localPlayer.prevRenderY + (localPlayer.y - localPlayer.prevRenderY) * (double)delta;
@@ -113,8 +119,12 @@ public class VeinMinerClient {
 
     public static void sendVeinMinePacket(int x, int y, int z, int side){
         Message message = new Message(breakWithVeinMinePacket);
-        message.ints = new int[]{x, y, z, side, veinMinerMode.toInt()};
+        message.ints = new int[]{x, y, z, side, veinMinerMode.toInt(), getPlayerFacing()};
         PacketHelper.send(message);
+    }
+
+    private static int getPlayerFacing(){
+        return MathHelper.floor((double)(localPlayer.yaw * 4.0F / 360.0F) + 0.5D) & 3;
     }
 
 }

@@ -7,8 +7,8 @@ import pl.lijek.veinminer.util.BlockData;
 
 public class NormalShape extends Shape {
 
-    public NormalShape(Level level, Vec3i origin) {
-        super(level, origin);
+    public NormalShape(Level level, Vec3i originVec3i, int hitSide, int playerFacing) {
+        super(level, originVec3i, hitSide, playerFacing);
     }
 
     @Override

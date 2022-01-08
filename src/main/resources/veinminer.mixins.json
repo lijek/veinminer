@@ -13,7 +13,8 @@
     "MultiPlayerInteractionManagerMixin",
     "MinecraftMixin",
     "InGameMixin",
-    "WorldRendererMixin"
+    "WorldRendererMixin",
+    "PlayerInventoryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

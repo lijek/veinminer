@@ -15,6 +15,6 @@ public class WorldRendererMixin {
 
     @Inject(method = "method_1554", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glBlendFunc(II)V", shift = At.Shift.BEFORE))
     private void onDrawBoxBounds(PlayerBase arg, HitResult hit, int i, ItemInstance arg2, float f, CallbackInfo ci){
-        VeinMinerClient.setAndRender(hit.x, hit.y, hit.z, f);
+        VeinMinerClient.setAndRender(hit, f);
     }
 }

@@ -90,7 +90,15 @@ dependencies {
 
 	modImplementation "com.github.ModificationStation:StationAPI:${project.stapi_version}"
 
-	modImplementation "com.github.calmilamsy:HowManyItems-Fabric-Unofficial:6af40ed"
+	modImplementation("com.github.calmilamsy:glass-config-api:${project.gcapi_version}"){
+		exclude group: 'com.github.ModificationStation', module: 'StationAPI'
+	}
+
+	modImplementation("com.github.calmilamsy:HowManyItems-Fabric-Unofficial:${project.hmi_version}"){
+		exclude group: 'com.github.ModificationStation', module: 'StationAPI'
+	}
+
+	modImplementation "com.github.calmilamsy:ModMenu:${project.modmenu_version}"
 }
 
 processResources {

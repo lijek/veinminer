@@ -15,9 +15,8 @@ import pl.lijek.veinminer.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
+import static pl.lijek.veinminer.VeinMiner.*;
 import static pl.lijek.veinminer.util.BlockAddAction.*;
-import static pl.lijek.veinminer.VeinMiner.maxBlocksToMine;
-import static pl.lijek.veinminer.VeinMiner.maxDistanceNORMAL;
 
 public abstract class Shape {
     public Level level;
@@ -25,10 +24,15 @@ public abstract class Shape {
     public BlockBase originBlock;
     public List<BlockData> blocks = new ArrayList<>();
     protected List<BlockData> scannedBlocks = new ArrayList<>();
+    public int hitSide;
+    public int playerFacing;
 
-    public Shape(Level level, Vec3i originVec3i){
+    private static boolean crappyDebug = false;
+
+    public Shape(Level level, Vec3i originVec3i, int hitSide, int playerFacing){
+        this.playerFacing = playerFacing;
         this.level = level;
-        changeOrigin(originVec3i.x, originVec3i.y, originVec3i.z);
+        changeOrigin(originVec3i.x, originVec3i.y, originVec3i.z, hitSide);
         blocks.add(origin);
         selectBlocks(origin.x, origin.y, origin.z);
     }
@@ -40,20 +44,35 @@ public abstract class Shape {
     public abstract void selectBlocks(int x, int y, int z);
 
     protected BlockAddAction addBlock(BlockData target){
-        if(blocks.size() >= maxBlocksToMine)
+        if(blocks.size() >= maxBlocksToMine) {
+            if(crappyDebug)
+                LOGGER.info("CANCELLED: MAX BLOCK COUNT EXCEEDED");
             return CANCEL;
+        }
 
-        if(scannedBlocks.contains(target))
+        if(scannedBlocks.contains(target)) {
+            if(crappyDebug)
+                LOGGER.info("SKIPPED: THIS BLOCK WAS SCANNED");
             return SKIP;
+        }
 
-        if(origin.equals(target))
+        if(origin.equals(target)) {
+            if(crappyDebug)
+                LOGGER.info("SKIPPED: THIS BLOCK EQUALS TARGET");
             return SKIP;
+        }
 
-        if (!BlockMatcher.ID_META.matchBlocks(this, target))
+        if (!BlockMatcher.ID_META.matchBlocks(this, target)) {
+            if(crappyDebug)
+                LOGGER.info("SKIPPED: THIS BLOCK DOESN'T MATCH ORIGIN");
             return SKIP;
+        }
 
-        if (!(maxDistanceNORMAL == -1 || getDistance(target) <= maxDistanceNORMAL))
+        if (!(maxDistance == -1 || getDistance(target) <= maxDistance)) {
+            if(crappyDebug)
+                LOGGER.info("SKIPPED: THIS BLOCK IS OUT OF maxDistance");
             return SKIP;
+        }
 
         if(!blocks.contains(target))
             blocks.add(target);
@@ -62,9 +81,10 @@ public abstract class Shape {
         return PASS;
     }
 
-    public void changeOrigin(int x, int y, int z){
+    public void changeOrigin(int x, int y, int z, int hitSide){
         this.origin = new BlockData(x, y, z, level.getTileId(x, y, z), level.getTileMeta(x, y, z));
         this.originBlock = BlockBase.BY_ID[origin.id];
+        this.hitSide = hitSide;
     }
 
     public void changeOrigin(BlockData origin){
@@ -82,22 +102,19 @@ public abstract class Shape {
     public void render(double fixX, double fixY, double fixZ){
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(false);
-        GL11.glLineWidth(5.0f);
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
         for(Vec3i block : blocks){
             Box box = Box.create(block.x, block.y, block.z, block.x + 1.0D, block.y + 1.0D, block.z + 1.0D).method_98(-fixX, -fixY, -fixZ);
             Util.drawCuboid(GL11.GL_LINE_LOOP, box);
         }
-        GL11.glDepthMask(true);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
-    public void reset(int x, int y, int z){
+    public void reset(int x, int y, int z, int hitSide){
         blocks = new ArrayList<>();
         scannedBlocks = new ArrayList<>();
-        changeOrigin(x, y, z);
+        changeOrigin(x, y, z, hitSide);
         blocks.add(origin);
         selectBlocks(x, y, z);
     }

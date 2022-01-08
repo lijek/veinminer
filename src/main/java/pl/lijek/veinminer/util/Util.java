@@ -11,6 +11,9 @@ public class Util {
     public static final int[] offsetsYForSide = {1, -1, 0, 0, 0, 0};
     public static final int[] offsetsZForSide = {0, 0, 1, -1, 0, 0};
 
+    public static final int[] directionXMultiplier = {0, -1, 0, 1};
+    public static final int[] directionZMultiplier = {1, 0, -1, 0};
+
     public static int getSphericalDistance(Vec3i a, Vec3i b)
     {
         return (int) Math.round(Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.z - b.z, 2) + Math.pow(a.y - b.y, 2)));
