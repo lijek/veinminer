@@ -5,6 +5,7 @@ import net.minecraft.block.Log;
 import net.minecraft.block.Plant;
 import net.minecraft.level.Level;
 import net.minecraft.util.maths.Box;
+import net.minecraft.util.maths.Vec3f;
 import net.minecraft.util.maths.Vec3i;
 import org.lwjgl.opengl.GL11;
 import pl.lijek.veinminer.util.BlockAddAction;
@@ -44,7 +45,7 @@ public abstract class Shape {
     public abstract void selectBlocks(int x, int y, int z);
 
     protected BlockAddAction addBlock(BlockData target){
-        if(blocks.size() >= maxBlocksToMine) {
+        if(blocks.size() >= config.maxBlocksToMine) {
             if(crappyDebug)
                 LOGGER.info("CANCELLED: MAX BLOCK COUNT EXCEEDED");
             return CANCEL;
@@ -68,7 +69,7 @@ public abstract class Shape {
             return SKIP;
         }
 
-        if (!(maxDistance == -1 || getDistance(target) <= maxDistance)) {
+        if (!(config.maxDistance == -1 || getDistance(target) <= config.maxDistance)) {
             if(crappyDebug)
                 LOGGER.info("SKIPPED: THIS BLOCK IS OUT OF maxDistance");
             return SKIP;

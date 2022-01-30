@@ -23,6 +23,9 @@
     ],
     "stationapi:event_bus_client": [
       "pl.lijek.veinminer.VeinMinerClient"
+    ],
+    "gcapi": [
+      "pl.lijek.veinminer.VeinMiner"
     ]
   },
   "mixins": [

@@ -1,5 +1,9 @@
 package pl.lijek.veinminer;
 
+import blue.endless.jankson.Comment;
+import net.glasslauncher.mods.api.gcapi.api.ConfigName;
+import net.glasslauncher.mods.api.gcapi.api.GConfig;
+import net.glasslauncher.mods.api.gcapi.api.MultiplayerSynced;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.entity.player.PlayerBase;
 import net.minecraft.util.maths.Vec3i;
@@ -20,10 +24,10 @@ public class VeinMiner {
     @Entrypoint.ModID
     public static ModID MODID = Null.get();
 
+    @GConfig(value = "config", visibleName = "Vein miner config")
+    public static final Config config = new Config();
+
     public static Identifier breakWithVeinMinePacket = Identifier.of(MODID, "breakWithVeinMiner");
-    public static boolean damageTool = true;
-    public static int maxDistance = 5;
-    public static int maxBlocksToMine = 525;
 
     @EventListener
     public void listenToMessages(MessageListenerRegistryEvent event){
@@ -41,5 +45,25 @@ public class VeinMiner {
         BlockBreaker blockBreaker = new BlockBreaker(playerBase, shape.level, shape.blocks);
         blockBreaker.breakBlocks();
         blockBreaker.spawnDrops();
+    }
+
+    public static class Config {
+        @MultiplayerSynced
+        @ConfigName("Damage tool")
+        @Comment("Whether damage the tool from vein mined blocks.")
+        public Boolean damageTool = true;
+        @MultiplayerSynced
+        @ConfigName("Maximum distance")
+        @Comment("Distance from first mined block to the furthest block.")
+        public Integer maxDistance = 5;
+        @MultiplayerSynced
+        @ConfigName("Maximum count of blocks to mine")
+        @Comment("If you set more than 525 (default) it could be laggy.")
+        public Integer maxBlocksToMine = 525;
+        /*@ConfigName("Last mining mode ID")
+        @Comment("This saves last selected mining mode, on server it won't do anything")
+        public Integer lastMode = VeinMinerMode.NORMAL.toInt();
+        todo make this last mode thing work
+        */
     }
 }

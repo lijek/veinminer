@@ -5,7 +5,6 @@ buildscript {
 			url = "https://maven.fabricmc.net/"
 		}
 		mavenCentral()
-		jcenter()
 		maven {
 			name = "Jitpack"
 			url 'https://jitpack.io/'
@@ -43,6 +42,9 @@ eclipse {
 
 repositories {
 	maven {
+		url "https://maven.glass-launcher.net/snapshots"
+	}
+	maven {
 		name = "Jitpack"
 		url "https://jitpack.io/"
 	}
@@ -67,9 +69,6 @@ dependencies {
 	implementation 'org.ow2.asm:asm-tree:9.0'
 	implementation 'org.ow2.asm:asm-util:9.0'
 
-	implementation "com.github.jhalterman:typetools:87240d6"
-	implementation "com.github.mineLdiver:expressions:2fa66db"
-	implementation "com.github.mineLdiver:UnsafeEvents:7efec57"
 
 	// to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -86,21 +85,37 @@ dependencies {
 	// adds some useful annotations for miscellaneous uses. does not add any dependencies, though people without the lib will be missing some useful context hints.
 	compile 'org.jetbrains:annotations:16.0.2'
 
-	modImplementation "com.github.minecraft-cursed-legacy:cursed-fabric-loader:${project.loader_version}"
+	modImplementation("com.github.minecraft-cursed-legacy:cursed-fabric-loader:${project.loader_version}"){
+		transitive false
+	}
 
-	modImplementation "com.github.ModificationStation:StationAPI:${project.stapi_version}"
-
-	modImplementation("com.github.calmilamsy:glass-config-api:${project.gcapi_version}"){
-		exclude group: 'com.github.ModificationStation', module: 'StationAPI'
+	modImplementation("net.modificationstation:StationAPI:${project.stapi_version}") {
+		exclude module: "cursed-fabric-loader"
 	}
 
 	modImplementation("com.github.calmilamsy:HowManyItems-Fabric-Unofficial:${project.hmi_version}"){
-		exclude group: 'com.github.ModificationStation', module: 'StationAPI'
+		transitive false
 	}
 
-	modImplementation "com.github.calmilamsy:ModMenu:${project.modmenu_version}"
-}
+	compile "blue.endless:jankson:1.2.1"
+	modImplementation("com.github.calmilamsy:ModMenu:${project.modmenu_version}"){
+		transitive false
+	}
+	modImplementation("com.github.calmilamsy:glass-config-api:${project.gcapi_version}"){
+		transitive false
+	}
 
+	modImplementation("com.github.calmilamsy:HowManyItems-Fabric-Unofficial:${project.hmi_version}"){
+		transitive false
+	}
+
+	implementation "org.apache.commons:commons-lang3:3.5"
+	implementation "com.github.jhalterman:typetools:87240d6"
+	implementation "com.github.mineLdiver:expressions:f676bbe"
+	implementation "com.github.mineLdiver:UnsafeEvents:7efec57"
+	implementation "it.unimi.dsi:fastutil:8.5.6"
+	implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
+}
 processResources {
 	inputs.property "version", project.version
 

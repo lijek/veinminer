@@ -6,7 +6,7 @@ import pl.lijek.veinminer.util.BlockAddAction;
 import pl.lijek.veinminer.util.BlockData;
 import pl.lijek.veinminer.util.Util;
 
-import static pl.lijek.veinminer.VeinMiner.maxDistance;
+import static pl.lijek.veinminer.VeinMiner.config;
 
 public class Tunnel1x1 extends Shape{
     public Tunnel1x1(Level level, Vec3i originVec3i, int hitSide, int playerFacing) {
@@ -19,7 +19,7 @@ public class Tunnel1x1 extends Shape{
         int dy = Util.offsetsYForSide[hitSide];
         int dz = Util.offsetsZForSide[hitSide];
 
-        for (int i = 0; i < maxDistance; i++) {
+        for (int i = 0; i < config.maxDistance; i++) {
             BlockData target = new BlockData(x + (dx * i), y + (dy * i), z + (dz * i));
             BlockAddAction action = addBlock(target);
             if(action.skipPass)

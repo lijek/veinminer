@@ -40,6 +40,7 @@ public class VeinMinerClient {
     public static void postMcInit() {
         Minecraft mc = ((Minecraft) FabricLoader.getInstance().getGameInstance());
         sneakKey = mc.options.sneakKey;
+        /*veinMinerMode = VeinMinerMode.values()[VeinMiner.config.lastMode];*/
     }
 
     @EventListener
@@ -61,6 +62,7 @@ public class VeinMinerClient {
             } else if (i < 0) {
                 veinMinerMode = veinMinerMode.getNext();
             }
+            /*VeinMiner.config.lastMode = veinMinerMode.toInt();*/
 
             timer = 200;
             return true;

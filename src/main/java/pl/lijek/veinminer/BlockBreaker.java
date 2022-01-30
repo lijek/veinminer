@@ -21,7 +21,6 @@ import java.util.List;
 
 import static net.minecraft.block.BlockBase.LEAVES;
 import static net.minecraft.block.BlockBase.SNOW;
-import static pl.lijek.veinminer.VeinMiner.damageTool;
 
 @RequiredArgsConstructor
 public class BlockBreaker {
@@ -103,7 +102,7 @@ public class BlockBreaker {
     }
 
     protected boolean useHeldItem(PlayerBase player, int x, int y, int z, int blockID){
-        if(!damageTool)
+        if(!VeinMiner.config.damageTool)
             return false;
         ItemInstance heldItem = player.getHeldItem();
         if (heldItem != null) {
